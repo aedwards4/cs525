@@ -13,20 +13,19 @@
 
 // typedef char* SM_PageHandle;'
 
-FILE *file;
+FILE *fp;
 
-extern void initStorageManager(void)
+void initStorageManager(void)
 {
     printf("initializing the storage manager");
 }
 
-extern RC createPageFile(char *fileName)
+RC createPageFile(char *fileName)
 {
 
     //if null, the file doesn't exist
     if (fileName == NULL)
     {
-
         // return
         return RC_FILE_NOT_FOUND;
     }
@@ -39,22 +38,51 @@ extern RC createPageFile(char *fileName)
     memset(block, '\0', PAGE_SIZE);
 
     //open file with write permissions
-    file = fopen(fileName, "w");
+    fp = fopen(fileName, "w");
 
     //write to file
-    fwrite(block, sizeof(char), PAGE_SIZE, file);
+    fwrite(block, sizeof(char), PAGE_SIZE, fp);
 
     //free the memory
     free(block);
 
     //close the file
-    fclose(file);
+    fclose(fp);
 
     //return status
     return RC_OK;
 }
 
-extern RC openPageFile(char *fileName, SM_FileHandle *fHandle);
+RC openPageFile(char *fileName, SM_FileHandle *fHandle)
+{
+    // helper variable
+    int numPages;
+
+    // open the file with read permissions
+    fp = fopen(fileName, "r");
+
+    //if null, the file doesn't exist
+    if (fp == NULL)
+    {
+        // return
+        return RC_FILE_NOT_FOUND;
+    }
+
+    // set position
+    fseek(fp, 0, SEEK_END);
+
+    // get total number of pages
+    numPages = ftell(fp);
+
+    // set attributes
+    fHandle->fileName = fileName;
+    fHandle->curPagePos = 0;
+    fHandle->totalNumPages = (int)(numPages % PAGE_SIZE + 1);
+
+    // return
+    return RC_OK;
+}
+
 extern RC closePageFile(SM_FileHandle *fHandle);
 extern RC destroyPageFile(char *fileName);
 
