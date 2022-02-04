@@ -61,7 +61,7 @@ RC openPageFile(char *fileName, SM_FileHandle *fHandle)
     // open the file with read permissions
     fp = fopen(fileName, "r");
 
-    //if null, the file doesn't exist
+    //if null, the file can't be found
     if (fp == NULL)
     {
         // return
@@ -83,8 +83,59 @@ RC openPageFile(char *fileName, SM_FileHandle *fHandle)
     return RC_OK;
 }
 
-extern RC closePageFile(SM_FileHandle *fHandle);
-extern RC destroyPageFile(char *fileName);
+RC closePageFile(SM_FileHandle *fHandle)
+{
+
+    //if null, the file can't be found
+    if (fp == NULL)
+    {
+        // return
+        return RC_FILE_NOT_FOUND;
+    }
+
+    // ***Unsure if necessary?
+    fHandle->fileName = "";
+    fHandle->curPagePos = 0;
+    fHandle->totalNumPages = 0;
+
+    // try to close the file
+    int res = fclose(fp);
+
+    // return appropriate code
+    if (res == 0)
+    {
+        return RC_OK;
+    }
+    else
+    {
+        return RC_FILE_NOT_FOUND;
+    }
+}
+
+extern RC destroyPageFile(char *fileName)
+{
+
+    //if null, the file doesn't exist
+    if (fileName == NULL)
+    {
+        // return
+        return RC_FILE_NOT_FOUND;
+    }
+
+    // Remove the file
+    int res = remove(fileName);
+
+    // return appropriate code
+    if (res == 0)
+    {
+        return RC_OK;
+    }
+    else
+    {
+        //****Need to double check this return code
+        return RC_FILE_NOT_FOUND;
+    }
+}
 
 /* reading blocks from disc */
 extern RC readBlock(int pageNum, SM_FileHandle *fHandle, SM_PageHandle memPage);
