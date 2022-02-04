@@ -309,7 +309,75 @@ RC readLastBlock(SM_FileHandle *fHandle, SM_PageHandle memPage)
 }
 
 /* writing blocks to a page file */
-extern RC writeBlock(int pageNum, SM_FileHandle *fHandle, SM_PageHandle memPage);
-extern RC writeCurrentBlock(SM_FileHandle *fHandle, SM_PageHandle memPage);
+extern RC writeBlock(int pageNum, SM_FileHandle *fHandle, SM_PageHandle memPage)
+{
+
+    int res;
+
+    // Make sure page number is valid
+    if (pageNum > 0 && pageNum < fHandle->totalNumPages)
+    {
+
+        //if null, the file can't be found
+        if (fHandle->fileName == NULL)
+        {
+            // return
+            return RC_FILE_NOT_FOUND;
+        }
+
+        int offset = PAGE_SIZE * pageNum;
+        res = fseek(fp, offset, SEEK_SET);
+
+        if (res != 0)
+        {
+
+            // return
+            return RC_WRITE_FAILED;
+        }
+
+        //fwrite(memPage, sizeof(char), PAGE_SIZE, file)
+        res = fwrite(memPage, PAGE_SIZE, 1, fp);
+
+        if (res != 0)
+        {
+
+            // return
+            return RC_WRITE_FAILED;
+        }
+
+        // adjust page position
+        fHandle->curPagePos = pageNum;
+
+        // return
+        return RC_OK;
+    }
+    else
+    {
+
+        // return
+        return RC_WRITE_FAILED;
+    }
+}
+
+RC writeCurrentBlock(SM_FileHandle *fHandle, SM_PageHandle memPage)
+{
+
+    //if null, the file can't be found
+    if (fHandle->fileName == NULL)
+    {
+        // return
+        return RC_FILE_NOT_FOUND;
+    }
+
+    // get current page
+    int currentPage = fHandle->curPagePos;
+
+    // call previous write block method on current pg
+    int res = writeBlock(currentPage, fHandle, memPage);
+
+    // return result
+    return res;
+}
+
 extern RC appendEmptyBlock(SM_FileHandle *fHandle);
 extern RC ensureCapacity(int numberOfPages, SM_FileHandle *fHandle);
