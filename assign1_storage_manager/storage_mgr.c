@@ -4,15 +4,7 @@
 #include "storage_mgr.h"
 #include "dberror.h"
 
-// typedef struct SM_FileHandle {
-// 	char *fileName;
-// 	int totalNumPages;
-// 	int curPagePos;
-// 	void *mgmtInfo;
-// } SM_FileHandle;
-
-// typedef char* SM_PageHandle;'
-
+// helper variable/pointer
 FILE *fp;
 
 void initStorageManager(void)
@@ -138,8 +130,53 @@ extern RC destroyPageFile(char *fileName)
 }
 
 /* reading blocks from disc */
-extern RC readBlock(int pageNum, SM_FileHandle *fHandle, SM_PageHandle memPage);
-extern int getBlockPos(SM_FileHandle *fHandle);
+RC readBlock(int pageNum, SM_FileHandle *fHandle, SM_PageHandle memPage)
+{
+
+    //if null, the file can't be found
+    if (fHandle->fileName == NULL)
+    {
+        // return
+        return RC_FILE_NOT_FOUND;
+    }
+
+    // if page does not exist
+    if ((pageNum > fHandle->totalNumPages - 1) || pageNum < 0)
+    {
+
+        // return
+        return RC_READ_NON_EXISTING_PAGE;
+    }
+
+    // get offset
+    int offset = pageNum * PAGE_SIZE;
+
+    // seek pointer to offset
+    fseek(fp, offset, SEEK_SET);
+
+    // Read the page into memory
+    fread(memPage, sizeof(char), PAGE_SIZE, fp);
+
+    // adjust the current page position in the file
+    fHandle->curPagePos = pageNum;
+
+    // return
+    return RC_OK;
+}
+
+int getBlockPos(SM_FileHandle *fHandle)
+{
+
+    //if null, the file can't be found
+    if (fHandle->fileName == NULL)
+    {
+        // return
+        return RC_FILE_NOT_FOUND;
+    }
+
+    return fHandle->curPagePos;
+}
+
 extern RC readFirstBlock(SM_FileHandle *fHandle, SM_PageHandle memPage);
 extern RC readPreviousBlock(SM_FileHandle *fHandle, SM_PageHandle memPage);
 extern RC readCurrentBlock(SM_FileHandle *fHandle, SM_PageHandle memPage);
