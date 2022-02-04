@@ -379,5 +379,58 @@ RC writeCurrentBlock(SM_FileHandle *fHandle, SM_PageHandle memPage)
     return res;
 }
 
-extern RC appendEmptyBlock(SM_FileHandle *fHandle);
-extern RC ensureCapacity(int numberOfPages, SM_FileHandle *fHandle);
+//********NEEDS TO BE CHECKED
+RC appendEmptyBlock(SM_FileHandle *fHandle)
+{
+
+    //if null, the file can't be found
+    if (fHandle->fileName == NULL)
+    {
+        // return
+        return RC_FILE_NOT_FOUND;
+    }
+
+    // allocate memory
+    char *newPage = (char *)calloc(PAGE_SIZE, sizeof(char));
+
+    // ....
+    int res = fwrite(newPage, 1, PAGE_SIZE, fp);
+    if (res != 0)
+    {
+
+        // free the memory
+        free(newPage);
+
+        // return
+        return RC_WRITE_FAILED;
+    }
+
+    // increment total number of pages
+    fHandle->totalNumPages++;
+
+    // free the memory
+    free(newPage);
+
+    // return
+    return RC_OK;
+}
+
+extern RC ensureCapacity(int numberOfPages, SM_FileHandle *fHandle)
+{
+
+    // if fHandle not initialized, return error
+    if (fHandle == NULL)
+    {
+
+        // return
+        return RC_FILE_HANDLE_NOT_INIT;
+    }
+
+    // if
+    if (numberOfPages <= fHandle->totalNumPages && numberOfPages >= 0)
+    {
+
+        // return
+        return RC_OK;
+    }
+}
