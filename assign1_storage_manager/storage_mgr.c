@@ -177,8 +177,58 @@ int getBlockPos(SM_FileHandle *fHandle)
     return fHandle->curPagePos;
 }
 
-extern RC readFirstBlock(SM_FileHandle *fHandle, SM_PageHandle memPage);
-extern RC readPreviousBlock(SM_FileHandle *fHandle, SM_PageHandle memPage);
+RC readFirstBlock(SM_FileHandle *fHandle, SM_PageHandle memPage)
+{
+
+    //if null, the file can't be found
+    if (fHandle->fileName == NULL)
+    {
+        // return
+        return RC_FILE_NOT_FOUND;
+    }
+
+    // seek pointer to offset
+    fseek(fp, 0, SEEK_SET);
+
+    // Read the page into memory
+    fread(memPage, sizeof(char), PAGE_SIZE, fp);
+
+    // adjust the current page position in the file
+    fHandle->curPagePos = 0;
+
+    // return
+    return RC_OK;
+}
+
+RC readPreviousBlock(SM_FileHandle *fHandle, SM_PageHandle memPage)
+{
+
+    //if null, the file can't be found
+    if (fHandle->fileName == NULL)
+    {
+        // return
+        return RC_FILE_NOT_FOUND;
+    }
+
+    // helper variable for current page
+    int currentPage = fHandle->curPagePos;
+
+    // set offset
+    int offset = currentPage - 1;
+
+    // seek pointer to offset
+    fseek(fp, offset, SEEK_SET);
+
+    // Read the page into memory
+    fread(memPage, sizeof(char), PAGE_SIZE, fp);
+
+    // adjust the current page position in the file
+    fHandle->curPagePos = currentPage - 1;
+
+    // return
+    return RC_OK;
+}
+
 extern RC readCurrentBlock(SM_FileHandle *fHandle, SM_PageHandle memPage);
 extern RC readNextBlock(SM_FileHandle *fHandle, SM_PageHandle memPage);
 extern RC readLastBlock(SM_FileHandle *fHandle, SM_PageHandle memPage);
