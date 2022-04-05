@@ -79,19 +79,110 @@ extern RC createTable (char *name, Schema *schema){
 
 }
 
+// *************----->NOT FINISHED<-------**************
+extern RC openTable (RM_TableData *rel, char *name){
 
-extern RC openTable (RM_TableData *rel, char *name);
-extern RC closeTable (RM_TableData *rel);
-extern RC deleteTable (char *name);
-extern int getNumTuples (RM_TableData *rel);
+	// Helper Variables
+	BM_PageHandle *ph = (BM_PageHandle*) malloc(sizeof(BM_PageHandle));
+	BM_BufferPool *bp = (BM_BufferPool*) malloc(sizeof(BM_BufferPool));
+
+	// Init the buffer pool *****************CHECK ARGS****************
+	initBufferPool(bp, name, _, RS_LRU, NULL);
+
+
+	//Assign TableData attributes
+	rel->name = name;
+	//rel->schema = ....
+	rel->mgmtData = bp;
+
+	// Free the memory
+	free(ph);
+
+	// Return success code
+	return RC_OK;
+
+}
+
+
+extern RC closeTable (RM_TableData *rel){
+
+	// shut down the buffer BM_BufferPool
+	void* mgmtData = rel->mgmtData;
+	shutdownBufferPool(mgmtData);
+
+	// Free all allocated memory
+	Schema* schema = rel->schema;
+	free(schema->attrNames);
+	free(schema->dataTypes);
+	free(schema->typeLength);
+	free(schema->keyAttrs);
+	free(schema);
+	free(rel->name);								// NOT SURE IF NEEDED
+	free(rel->mgmtData);						// NOT SURE IF NEEDED
+
+	// Return success code
+	return RC_OK;
+
+}
+
+
+extern RC deleteTable (char *name){
+
+	// destroy page file with given name
+	int res = destroyPageFile(name);
+
+	// Return success or error code
+	return res;
+
+}
+
+
+// *************----->NOT FINISHED<-------**************
+extern int getNumTuples (RM_TableData *rel){
+
+	// Helper Variables
+	int tuples = 0;
+
+
+
+	// Return number of tuples
+	return tuples;
+
+}
 
 // handling records in a table
-extern RC insertRecord (RM_TableData *rel, Record *record);
-extern RC deleteRecord (RM_TableData *rel, RID id);
-extern RC updateRecord (RM_TableData *rel, Record *record);
+// *************----->NOT FINISHED<-------**************
+extern RC insertRecord (RM_TableData *rel, Record *record){
+
+	// Return success code
+	return RC_OK;
+
+}
+
+
+// *************----->NOT FINISHED<-------**************
+extern RC deleteRecord (RM_TableData *rel, RID id){
+
+
+	// Return success code
+	return RC_OK;
+
+}
+
+
+// *************----->NOT FINISHED<-------**************
+extern RC updateRecord (RM_TableData *rel, Record *record){
+
+
+	// Return success code
+	return RC_OK;
+
+}
+
+
+// *************----->NOT FINISHED<-------**************
 extern RC getRecord (RM_TableData *rel, RID id, Record *record) {
 
-	// do things
 
 	// Return success code
 	return RC_OK;
@@ -104,10 +195,10 @@ extern RC getRecord (RM_TableData *rel, RID id, Record *record) {
 // 	RM_TableData *rel;
 // 	void *mgmtData;
 // } RM_ScanHandle;
+
+// *************----->NOT FINISHED<-------**************
 extern RC startScan (RM_TableData *rel, RM_ScanHandle *scan, Expr *cond){
 
-
-	// do things
 
 	// Return success code
 	return RC_OK;
@@ -115,9 +206,8 @@ extern RC startScan (RM_TableData *rel, RM_ScanHandle *scan, Expr *cond){
 }
 
 
+// *************----->NOT FINISHED<-------**************
 extern RC next (RM_ScanHandle *scan, Record *record){
-
-	// do things
 
 	// Return success code
 	return RC_OK;
