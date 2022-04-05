@@ -54,14 +54,95 @@ extern RC next (RM_ScanHandle *scan, Record *record);
 extern RC closeScan (RM_ScanHandle *scan);
 
 // dealing with schemas
-extern int getRecordSize (Schema *schema);
-extern Schema *createSchema (int numAttr, char **attrNames, DataType *dataTypes, int *typeLength, int keySize, int *keys);
-extern RC freeSchema (Schema *schema);
+extern int getRecordSize (Schema *schema){
+
+	// Helper variables
+	int rSize = 0;
+	int numAttr = schema->numAttr;
+	DataType dt;
+	int i;
+
+	// Calculate record size
+	for(i=0; i<numAttr; i++){
+
+		dt = schema->dataTypes[i];
+
+		if (dt == DT_INT) {
+
+			rSize += sizeof(int);
+
+		} else if (dt == DT_STRING) {
+
+			int length = schema->typeLength[i];
+			rSize += length;
+
+		} else if (dt == DT_FLOAT) {
+
+			rSize += sizeof(float);
+
+		} else if (dt == DT_BOOL){
+
+			rSize += sizeof(bool);
+
+		}
+	}
+
+	// Return record size
+	return rSize;
+
+}
+
+
+extern Schema *createSchema (int numAttr, char **attrNames, DataType *dataTypes, int *typeLength, int keySize, int *keys){
+
+	// Allocate memory
+	Schema *schema = (Schema*) malloc(sizeof(Schema));
+
+	// Assign attributes
+	schema->numAttr = numAttr;
+	schema->attrNames = attrNames;
+	schema->dataTypes = dataTypes;
+	schema->typeLength = typeLength;
+	schema->keySize = keySize;
+	schema->keyAttrs = keys;
+
+	// Return Schema
+	return schema;
+
+}
+
+
+extern RC freeSchema (Schema *schema){
+
+	// Free the memory
+	free(schema);
+
+	return RC_OK;
+
+}
 
 // dealing with records and attribute values
-extern RC createRecord (Record **record, Schema *schema);
-extern RC freeRecord (Record *record);
+extern RC createRecord (Record **record, Schema *schema){
 
+	// Allocate memory
+	int rSize = getRecordSize(schema);
+	*record = (Record*) malloc(Record);
+	(*record)->data = (char*) malloc(rSize);
+
+	return RC_OK;
+
+}
+
+
+extern RC freeRecord (Record *record){
+
+	// Free the memory
+	free(record->data);
+	free(record);
+
+	return RC_OK;
+
+}
 
 
 extern RC getAttr (Record *record, Schema *schema, int attrNum, Value **value){
