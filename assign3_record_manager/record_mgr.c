@@ -154,6 +154,11 @@ extern int getNumTuples (RM_TableData *rel){
 // *************----->NOT FINISHED<-------**************
 extern RC insertRecord (RM_TableData *rel, Record *record){
 
+	// Helper Variables
+	BM_PageHandle *ph = (BM_PageHandle*) malloc(sizeof(BM_PageHandle));
+	BM_BufferPool *bp = (BM_BufferPool*) malloc(sizeof(BM_BufferPool));
+	
+
 	// Return success code
 	return RC_OK;
 
