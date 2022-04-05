@@ -15,6 +15,7 @@
 // table and manager
 extern RC initRecordManager (void *mgmtData) {
 
+	// Return success code
 	return RC_OK;
 
 }
@@ -22,6 +23,7 @@ extern RC initRecordManager (void *mgmtData) {
 
 extern RC shutdownRecordManager (){
 
+	// Return success code
 	return RC_OK;
 
 }
@@ -87,19 +89,27 @@ extern int getNumTuples (RM_TableData *rel);
 extern RC insertRecord (RM_TableData *rel, Record *record);
 extern RC deleteRecord (RM_TableData *rel, RID id);
 extern RC updateRecord (RM_TableData *rel, Record *record);
-extern RC getRecord (RM_TableData *rel, RID id, Record *record);
-
-// scans
-extern RC startScan (RM_TableData *rel, RM_ScanHandle *scan, Expr *cond){
-
-	// typedef struct RM_ScanHandle
-	// {
-	// 	RM_TableData *rel;
-	// 	void *mgmtData;
-	// } RM_ScanHandle;
+extern RC getRecord (RM_TableData *rel, RID id, Record *record) {
 
 	// do things
 
+	// Return success code
+	return RC_OK;
+
+}
+
+// scans
+// typedef struct RM_ScanHandle
+// {
+// 	RM_TableData *rel;
+// 	void *mgmtData;
+// } RM_ScanHandle;
+extern RC startScan (RM_TableData *rel, RM_ScanHandle *scan, Expr *cond){
+
+
+	// do things
+
+	// Return success code
 	return RC_OK;
 
 }
@@ -109,6 +119,7 @@ extern RC next (RM_ScanHandle *scan, Record *record){
 
 	// do things
 
+	// Return success code
 	return RC_OK;
 
 }
@@ -116,6 +127,7 @@ extern RC next (RM_ScanHandle *scan, Record *record){
 
 extern RC closeScan (RM_ScanHandle *scan){
 
+	// Return success code
 	return RC_OK;
 
 }
@@ -184,6 +196,7 @@ extern RC freeSchema (Schema *schema){
 	// Free the memory
 	free(schema);
 
+	// Return success code
 	return RC_OK;
 
 }
@@ -196,6 +209,7 @@ extern RC createRecord (Record **record, Schema *schema){
 	*record = (Record*) malloc(Record);
 	(*record)->data = (char*) malloc(rSize);
 
+	// Return success code
 	return RC_OK;
 
 }
@@ -207,6 +221,7 @@ extern RC freeRecord (Record *record){
 	free(record->data);
 	free(record);
 
+	// Return success code
 	return RC_OK;
 
 }
@@ -247,6 +262,7 @@ extern RC getAttr (Record *record, Schema *schema, int attrNum, Value **value){
 
 	}
 
+	// Return success code
 	return RC_OK;
 
 }
@@ -283,6 +299,7 @@ extern RC setAttr (Record *record, Schema *schema, int attrNum, Value *value){
 
 	}
 
+	// Return success code
 	return RC_OK;
 }
 
