@@ -29,9 +29,50 @@ extern RC shutdownRecordManager (){
 
 extern RC createTable (char *name, Schema *schema){
 
-	// do things
+	// Helper variables
+	SM_FileHandle fileH;
+	int res;
 
+	// Create the page file
+	res = createPageFile(name);
 
+	if (res == RC_OK) {
+
+		// Open the newly created page file
+		res = openPageFile(name, &fileH);
+
+		if (res == RC_OK){
+
+			// Check capacity of first page
+			res = ensureCapacity(1, &fileH);
+
+			if (res == RC_OK){
+
+				// Write serialized schema to first page
+				writeBlock(0, &fileH, &(serializeSchema(schema)));
+
+				// Close the page file
+				closePageFile(&fileH);
+
+			} else {
+
+				// Return error code
+				return res;
+			}
+
+		} else {
+
+			// Return error code
+			return res;
+		}
+
+	} else {
+
+		// Return error code
+		return res;
+	}
+
+	// Return success code
 	return RC_OK;
 
 }
@@ -49,9 +90,35 @@ extern RC updateRecord (RM_TableData *rel, Record *record);
 extern RC getRecord (RM_TableData *rel, RID id, Record *record);
 
 // scans
-extern RC startScan (RM_TableData *rel, RM_ScanHandle *scan, Expr *cond);
-extern RC next (RM_ScanHandle *scan, Record *record);
-extern RC closeScan (RM_ScanHandle *scan);
+extern RC startScan (RM_TableData *rel, RM_ScanHandle *scan, Expr *cond){
+
+	// typedef struct RM_ScanHandle
+	// {
+	// 	RM_TableData *rel;
+	// 	void *mgmtData;
+	// } RM_ScanHandle;
+
+	// do things
+
+	return RC_OK;
+
+}
+
+
+extern RC next (RM_ScanHandle *scan, Record *record){
+
+	// do things
+
+	return RC_OK;
+
+}
+
+
+extern RC closeScan (RM_ScanHandle *scan){
+
+	return RC_OK;
+
+}
 
 // dealing with schemas
 extern int getRecordSize (Schema *schema){
