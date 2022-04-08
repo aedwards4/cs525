@@ -86,20 +86,70 @@ extern RC openTable (RM_TableData *rel, char *name){
 	BM_PageHandle *ph = (BM_PageHandle*) malloc(sizeof(BM_PageHandle));
 	BM_BufferPool *bp = (BM_BufferPool*) malloc(sizeof(BM_BufferPool));
 
-	// Init the buffer pool *****************CHECK ARGS****************
-	initBufferPool(bp, name, _, RS_LRU, NULL);
+	// Init the buffer pool
+	int bufferSize = 10;			//******POSSIBLY NEEDS TO BE CHANGED
+	initBufferPool(bp, name, bufferSize, RS_LRU, NULL);
 
+	// Pin the page handle to the buffer pool
+	pinPage(bp, ph, 0);
 
 	//Assign TableData attributes
 	rel->name = name;
-	//rel->schema = ....
 	rel->mgmtData = bp;
+
+	// Initialize the Schema and assign to attribute
+	char *pgData = ph->data;
+	Schema *schema = schemaHelper(pgData);
+	rel->schema = schema;
 
 	// Free the memory
 	free(ph);
 
+	// Unpin the page handle
+	unPinPage(bp, ph);			// ********NOT SURE IF NEEDED
+
 	// Return success code
 	return RC_OK;
+
+}
+
+// Helper function that deserializes the given string to create a new Schema
+Schema* schemaHelper(char *pgData){
+
+	// Allocate the memory & copy the pgData into array
+	Schema *schema = (Schema*) malloc(sizeof(schema));
+	int len = strlen(pgData);
+	char data[len];
+	strcopy(data,pgData);
+
+	// Capture data from given string
+	//APPEND(result, "Schema with <%i> attributes (", schema->numAttr);
+	char *temp = strtok(data,"<");
+	temp = strtok(data,">");
+	int numAttr = atoi(temp);
+	temp = strtok(data,"(");
+
+	// Helper variables for Schema attributes
+	char **attrNames = (char**) malloc(sizeof(char*) * numAttr);
+	DataType *dataTypes = (DataType*) malloc(sizeof(DataType) * numAttr);
+	int *typeLength = (int*) malloc(sizeof(int) * numAttr);
+	int *keyAttrs;
+	int keySize;
+
+	int i;
+	for (i=0; i<numAttr; i++){
+
+		// do things
+
+	}
+
+
+	// **************INCOMPLETE***************
+
+
+	// Create and return the schema
+	Schema *newSchema = createSchema(numAttr,attrNames,dataTypes,typeLength,keySize,keys);
+	return newSchema;
 
 }
 
@@ -143,7 +193,7 @@ extern int getNumTuples (RM_TableData *rel){
 	// Helper Variables
 	int tuples = 0;
 
-
+	// INCOMPLETE*******************
 
 	// Return number of tuples
 	return tuples;
@@ -157,7 +207,7 @@ extern RC insertRecord (RM_TableData *rel, Record *record){
 	// Helper Variables
 	BM_PageHandle *ph = (BM_PageHandle*) malloc(sizeof(BM_PageHandle));
 	BM_BufferPool *bp = (BM_BufferPool*) malloc(sizeof(BM_BufferPool));
-	
+
 
 	// Return success code
 	return RC_OK;
