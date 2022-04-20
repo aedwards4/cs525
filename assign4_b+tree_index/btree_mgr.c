@@ -183,7 +183,7 @@ extern RC deleteBtree(char *idxId)
     return RC_OK;
 }
 
-// ----- Index Manager Functions -----
+// ----- B+Tree Access Information Functions -----
 
 // ***FINISHED***
 // Assigns number of nodes to given result variable
@@ -223,7 +223,30 @@ extern RC getKeyType(BTreeHandle *tree, DataType *result)
 
 // ----- Key Functions -----
 
-extern RC findKey(BTreeHandle *tree, Value *key, RID *result);
+// Assigns RID to given result variable
+extern RC findKey(BTreeHandle *tree, Value *key, RID *result)
+{
+
+    // Declare variables
+    TreeData *data;
+    Node *node;
+
+    // Initialize TreeData structure to get data
+    data = (TreeData *)malloc(sizeof(TreeData *));
+    data = tree->mgmtData;
+
+    // Find node
+
+    // Find key in node
+
+    // if key not found --> return RC_IM_KEY_NOT_FOUND
+
+    // else -->
+    // Assign RID to result variable
+
+    return RC_OK;
+}
+
 extern RC insertKey(BTreeHandle *tree, Value *key, RID rid);
 extern RC deleteKey(BTreeHandle *tree, Value *key);
 extern RC openTreeScan(BTreeHandle *tree, BT_ScanHandle **handle);
