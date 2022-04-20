@@ -185,38 +185,51 @@ extern RC deleteBtree(char *idxId)
 
 // ----- Index Manager Functions -----
 
+// ***FINISHED***
+// Assigns number of nodes to given result variable
 extern RC getNumNodes(BTreeHandle *tree, int *result)
 {
-    // Opening tree
-    openBtree(*tree);
+    // Initialize TreeData structure to get data
+    TreeData *data = (TreeData *)malloc(sizeof(TreeData *));
+    data = tree->mgmtData;
+
+    // Assign number of nodes to result
+    (*result) = data->nodes;
+
+    // Free used memory
+    free(data);
 
     return RC_OK;
 }
 
 extern RC getNumEntries(BTreeHandle *tree, int *result)
 {
-    // Opening tree
-    openBtree(*tree);
+
+    // Get num of nodes......
 
     return RC_OK;
 }
 
+// ***FINISHED***
+// Assigns data type of keys to the given result variable
 extern RC getKeyType(BTreeHandle *tree, DataType *result)
 {
-    // Opening tree
-    openBtree(*tree);
+
+    // Assign keyType to result
+    (*result) = tree->keyType;
 
     return RC_OK;
 }
 
-// Key Functions
+// ----- Key Functions -----
+
 extern RC findKey(BTreeHandle *tree, Value *key, RID *result);
 extern RC insertKey(BTreeHandle *tree, Value *key, RID rid);
 extern RC deleteKey(BTreeHandle *tree, Value *key);
 extern RC openTreeScan(BTreeHandle *tree, BT_ScanHandle **handle);
 extern RC nextEntry(BT_ScanHandle *handle, RID *result)
 {
-    // RC_IM_NO_MORE_ENTRIES
+    // Error code: RC_IM_NO_MORE_ENTRIES
 
     return RC_OK;
 }
